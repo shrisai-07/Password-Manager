@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+    <h2>Your Vault</h2>
+    <a href="/add">Add New Password</a>
+    <a href="/logout">Logout</a>
+    <hr>
+
+    {% for item in passwords %}
+        <p>
+            <strong>Website:</strong> {{ item.website }} <br>
+            <strong>Email:</strong> {{ item.email }} <br>
+            <strong>Password:</strong> {{ item.encrypted_password }}
+        </p>
+        <hr>
+    {% endfor %}
+</body>
+</html>
