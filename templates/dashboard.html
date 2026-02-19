@@ -4,18 +4,51 @@
     <title>Dashboard</title>
 </head>
 <body>
+
     <h2>Your Vault</h2>
-    <a href="/add">Add New Password</a>
+
+    <a href="/add">Add New Password</a> |
     <a href="/logout">Logout</a>
+
     <hr>
 
     {% for item in passwords %}
         <p>
             <strong>Website:</strong> {{ item.website }} <br>
             <strong>Email:</strong> {{ item.email }} <br>
-            <strong>Password:</strong> {{ item.encrypted_password }}
+
+            <strong>Password:</strong>
+            <span id="hidden{{ item.id }}">••••••••</span>
+            <span id="pass{{ item.id }}" style="display:none;">
+                {{ item.password }}
+            </span>
+
+            <button onclick="togglePassword({{ item.id }})">
+                Show
+            </button>
+
+            <br><br>
+
+            <a href="/edit/{{ item.id }}">Edit</a> |
+            <a href="/delete/{{ item.id }}">Delete</a>
         </p>
         <hr>
     {% endfor %}
+
+    <script>
+        function togglePassword(id) {
+            var pass = document.getElementById("pass" + id);
+            var hidden = document.getElementById("hidden" + id);
+
+            if (pass.style.display === "none") {
+                pass.style.display = "inline";
+                hidden.style.display = "none";
+            } else {
+                pass.style.display = "none";
+                hidden.style.display = "inline";
+            }
+        }
+    </script>
+
 </body>
 </html>

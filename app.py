@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, session
 from database import create_tables, get_db_connection
-from security import encrypt_password
+from security import encrypt_password, decrypt_password
 import bcrypt
 
 app = Flask(__name__)
@@ -69,11 +69,20 @@ def dashboard():
         return redirect("/login")
 
     conn = get_db_connection()
-    passwords = conn.execute(
+    rows = conn.execute(
         "SELECT * FROM passwords WHERE user_id = ?",
         (session["user_id"],)
     ).fetchall()
     conn.close()
+
+    passwords = []
+    for row in rows:
+        passwords.append({
+            "id": row["id"],
+            "website": row["website"],
+            "email": row["email"],
+            "password": decrypt_password(row["encrypted_password"])
+        })
 
     return render_template("dashboard.html", passwords=passwords)
 
@@ -100,6 +109,21 @@ def add_password():
         return redirect("/dashboard")
 
     return render_template("add.html")
+
+@app.route("/delete/<int:id>")
+def delete_password(id):
+    if "user_id" not in session:
+        return redirect("/login")
+
+    conn = get_db_connection()
+    conn.execute(
+        "DELETE FROM passwords WHERE id = ? AND user_id = ?",
+        (id, session["user_id"])
+    )
+    conn.commit()
+    conn.close()
+
+    return redirect("/dashboard")
 
 @app.route("/logout")
 def logout():
