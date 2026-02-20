@@ -2,13 +2,22 @@ from flask import Flask, render_template, request, redirect, session
 from database import create_tables, get_db_connection
 from security import encrypt_password, decrypt_password
 import bcrypt
+import random
+import string
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
 
+
+def generate_strong_password(length=14):
+    characters = string.ascii_letters + string.digits + "!@#$%^&*()_+-="
+    return ''.join(random.choice(characters) for _ in range(length))
+
+
 @app.route("/")
 def home():
     return "Password Manager Running Successfully!"
+
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -35,6 +44,7 @@ def register():
         return redirect("/login")
 
     return render_template("register.html")
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -63,6 +73,7 @@ def login():
 
     return render_template("login.html")
 
+
 @app.route("/dashboard")
 def dashboard():
     if "user_id" not in session:
@@ -85,6 +96,7 @@ def dashboard():
         })
 
     return render_template("dashboard.html", passwords=passwords)
+
 
 @app.route("/add", methods=["GET", "POST"])
 def add_password():
@@ -110,6 +122,16 @@ def add_password():
 
     return render_template("add.html")
 
+
+@app.route("/generate")
+def generate():
+    if "user_id" not in session:
+        return redirect("/login")
+
+    password = generate_strong_password()
+    return {"password": password}
+
+
 @app.route("/delete/<int:id>")
 def delete_password(id):
     if "user_id" not in session:
@@ -125,10 +147,12 @@ def delete_password(id):
 
     return redirect("/dashboard")
 
+
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/login")
+
 
 if __name__ == "__main__":
     create_tables()
