@@ -2,53 +2,75 @@
 <html>
 <head>
     <title>Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
-    <h2>Your Vault</h2>
+<div class="container">
 
-    <a href="/add">Add New Password</a> |
-    <a href="/logout">Logout</a>
-
-    <hr>
+    <div class="header">
+        <h2>Your Saved Passwords</h2>
+        <div class="nav-links">
+            <a href="/add">Add A New Password</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
 
     {% for item in passwords %}
-        <p>
-            <strong>Website:</strong> {{ item.website }} <br>
-            <strong>Email:</strong> {{ item.email }} <br>
+    <div class="card">
 
-            <strong>Password:</strong>
+        <h3>{{ item.website }}</h3>
+        <p>Email: {{ item.email }}</p>
+
+        <p>
+            Password:
             <span id="hidden{{ item.id }}">••••••••</span>
             <span id="pass{{ item.id }}" style="display:none;">
                 {{ item.password }}
             </span>
-
-            <button onclick="togglePassword({{ item.id }})">
-                Show
-            </button>
-
-            <br><br>
-
-            <a href="/edit/{{ item.id }}">Edit</a> |
-            <a href="/delete/{{ item.id }}">Delete</a>
         </p>
-        <hr>
+
+        <button class="primary-btn" onclick="togglePassword({{ item.id }})">
+            Show
+        </button>
+
+        <button class="secondary-btn" onclick="copyPassword({{ item.id }})">
+            Copy
+        </button>
+
+        <br><br>
+
+        <a href="/edit/{{ item.id }}">Edit</a><br><br>
+        <a href="/delete/{{ item.id }}" class="danger">Delete</a>
+
+    </div>
     {% endfor %}
 
-    <script>
-        function togglePassword(id) {
-            var pass = document.getElementById("pass" + id);
-            var hidden = document.getElementById("hidden" + id);
+</div>
 
-            if (pass.style.display === "none") {
-                pass.style.display = "inline";
-                hidden.style.display = "none";
-            } else {
-                pass.style.display = "none";
-                hidden.style.display = "inline";
-            }
-        }
-    </script>
+<script>
+function togglePassword(id) {
+    var pass = document.getElementById("pass" + id);
+    var hidden = document.getElementById("hidden" + id);
+
+    if (pass.style.display === "none") {
+        pass.style.display = "inline";
+        hidden.style.display = "none";
+    } else {
+        pass.style.display = "none";
+        hidden.style.display = "inline";
+    }
+}
+
+function copyPassword(id) {
+    var pass = document.getElementById("pass" + id).innerText;
+
+    navigator.clipboard.writeText(pass)
+    .then(function() {
+        alert("Password copied!");
+    });
+}
+</script>
 
 </body>
 </html>

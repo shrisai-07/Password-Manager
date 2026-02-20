@@ -2,34 +2,38 @@
 <html>
 <head>
     <title>Add Password</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <h2>Add New Credential</h2>
 
-    <form method="POST">
-        <input type="text" name="website" placeholder="Website" required><br><br>
+<div class="container">
+    <div class="card">
+        <h2>Add Credential</h2>
 
-        <input type="text" name="email" placeholder="Email" required><br><br>
+        <form method="POST">
+            <input type="text" name="website" placeholder="Website" required>
+            <input type="text" name="email" placeholder="Email" required>
 
-        <input type="text" name="password" id="passwordField" placeholder="Password" required>
-        <button type="button" onclick="generatePassword()">Generate</button>
-        <br><br>
+            <input type="text" name="password" id="passwordField" placeholder="Password" required>
 
-        <button type="submit">Save</button>
-    </form>
+            <button type="button" class="secondary-btn" onclick="generatePassword()">Generate</button>
+            <button type="submit" class="primary-btn">Save</button>
+        </form>
 
-    <br>
-    <a href="/dashboard">Back to Dashboard</a>
+        <br>
+        <a href="/dashboard">Back</a>
+    </div>
+</div>
 
-    <script>
-        function generatePassword() {
-            fetch("/generate")
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById("passwordField").value = data.password;
-            });
-        }
-    </script>
+<script>
+function generatePassword() {
+    fetch("/generate")
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("passwordField").value = data.password;
+    });
+}
+</script>
 
 </body>
 </html>
